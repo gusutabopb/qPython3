@@ -15,7 +15,7 @@
 #
 
 from distutils.core import setup
-from qpython import __version__
+from qpython3 import __version__
 
 import os
 

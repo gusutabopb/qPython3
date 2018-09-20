@@ -17,12 +17,12 @@
 __all__ = ['qconnection', 'qtype', 'qtemporal', 'qcollection']
 
 
-__version__ = '1.2.2'
+__version__ = '3.0.0dev0'
 
 
 
 try:
-    from qpython.fastutils import uncompress
+    from qpython3.fastutils import uncompress
 except:
     __is_cython_enabled__ = False
 else:
