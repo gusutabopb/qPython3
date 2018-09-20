@@ -1,5 +1,11 @@
-.. ATTENTION::
-This project is in maintenance mode. We may fix bugs, but no new features will be added in foreseeable future. 
+This is a fork of `exxeleron/qPython <https://github.com/exxeleron/qPython>`__. I have forked this to provide Python 3.7+ support to qPython, since the original project is in "maintenance mode" and seems to be stale. Support to older versions of Python (especially anything below 3.6) is not guaranteed and will probably be dropped.
+    
+Currently, no plans to add the project to PyPI, so in case you find this useful, install from Github:
+ 
+.. code:: bash
+ 
+   pip install git+https://github.com/gusutabopb/qPython3.git
+
 
 qPython
 =======
