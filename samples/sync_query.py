@@ -14,7 +14,7 @@
 #  limitations under the License.
 # 
 
-from qpython import qconnection
+from qpython3 import qconnection
 
 
 if __name__ == '__main__':
@@ -28,18 +28,22 @@ if __name__ == '__main__':
 
     # simple query execution via: QConnection.__call__
     data = q('{`int$ til x}', 10)
-    print('type: %s, numpy.dtype: %s, meta.qtype: %s, data: %s ' % (type(data), data.dtype, data.meta.qtype, data))
+    print(f'type: {type(data)}, numpy.dtype: {data.dtype}, '
+          f'meta.qtype: {data.meta.qtype}, data: {data}')
 
     # simple query execution via: QConnection.sync
     data = q.sync('{`long$ til x}', 10)
-    print('type: %s, numpy.dtype: %s, meta.qtype: %s, data: %s ' % (type(data), data.dtype, data.meta.qtype, data))
+    print(f'type: {type(data)}, numpy.dtype: {data.dtype}, '
+          f'meta.qtype: {data.meta.qtype}, data: {data}')
 
     # low-level query and read
     q.query(qconnection.MessageType.SYNC, '{`short$ til x}', 10) # sends a SYNC query
     msg = q.receive(data_only=False, raw=False) # retrieve entire message
-    print('type: %s, message type: %s, data size: %s, is_compressed: %s ' % (type(msg), msg.type, msg.size, msg.is_compressed))
+    print(f'type: {type(msg)}, message type: {msg.type}, '
+          f'data size: {msg.size}, is_compressed: {msg.is_compressed}')
     data = msg.data
-    print('type: %s, numpy.dtype: %s, meta.qtype: %s, data: %s ' % (type(data), data.dtype, data.meta.qtype, data))
+    print(f'type: {type(data)}, numpy.dtype: {data.dtype}, '
+          f'meta.qtype: {data.meta.qtype}, data: {data}')
     # close connection
     q.close()
 

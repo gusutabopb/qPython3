@@ -14,11 +14,11 @@
 #  limitations under the License.
 #
 
-import numpy
+import numpy as np
 
-from qpython import qconnection
-from qpython.qreader import QReader
-from qpython.qtype import QSYMBOL, QSYMBOL_LIST, Mapper
+from qpython3 import qconnection
+from qpython3.qreader import QReader
+from qpython3.qtype import QSYMBOL, QSYMBOL_LIST, Mapper
 
 
 class StringQReader(QReader):
@@ -33,12 +33,11 @@ class StringQReader(QReader):
             symbols = self._buffer.get_symbols(length)
             return [s.decode(self._encoding) for s in symbols]
         else:
-            return QReader._read_list(self, qtype = qtype)
+            return QReader._read_list(self, qtype=qtype)
 
     @parse(QSYMBOL)
-    def _read_symbol(self, qtype = QSYMBOL):
-        return numpy.string_(self._buffer.get_symbol()).decode(self._encoding)
-
+    def _read_symbol(self, qtype=QSYMBOL):
+        return np.string_(self._buffer.get_symbol()).decode(self._encoding)
 
 
 class ReverseStringQReader(QReader):
@@ -54,23 +53,22 @@ class ReverseStringQReader(QReader):
         return [s.decode(self._encoding)[::-1] for s in symbols]
 
     @parse(QSYMBOL)
-    def _read_symbol(self, qtype = QSYMBOL):
-        return numpy.string_(self._buffer.get_symbol()).decode(self._encoding)[::-1]
-
+    def _read_symbol(self, qtype=QSYMBOL):
+        return np.string_(self._buffer.get_symbol()).decode(self._encoding)[::-1]
 
 
 if __name__ == '__main__':
-    with qconnection.QConnection(host = 'localhost', port = 5000, reader_class = StringQReader) as q:
+    with qconnection.QConnection(host='localhost', port=5000, reader_class=StringQReader) as q:
         symbols = q.sync('`foo`bar')
         print(symbols, type(symbols), type(symbols[0]))
-    
+
         symbol = q.sync('`foo')
         print(symbol, type(symbol))
-    
-    
-    with qconnection.QConnection(host = 'localhost', port = 5000, reader_class = ReverseStringQReader) as q:
+
+    with qconnection.QConnection(host='localhost', port=5000,
+                                 reader_class=ReverseStringQReader) as q:
         symbols = q.sync('`foo`bar')
         print(symbols, type(symbols), type(symbols[0]))
-    
+
         symbol = q.sync('`foo')
         print(symbol, type(symbol))

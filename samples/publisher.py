@@ -14,16 +14,16 @@
 #  limitations under the License.
 # 
 
-import datetime
-import numpy
 import random
 import threading
 import sys
 import time
+from datetime import datetime
 
-from qpython import qconnection
-from qpython.qcollection import qlist
-from qpython.qtype import QException, QTIME_LIST, QSYMBOL_LIST, QFLOAT_LIST
+import numpy as np
+from qpython3 import qconnection
+from qpython3.qcollection import qlist
+from qpython3.qtype import QException, QTIME_LIST, QSYMBOL_LIST, QFLOAT_LIST
 
 
 class PublisherThread(threading.Thread):
@@ -46,7 +46,7 @@ class PublisherThread(threading.Thread):
                 # publish data to tick
                 # function: .u.upd
                 # table: ask
-                self.q.sync('.u.upd', numpy.string_('ask'), self.get_ask_data())
+                self.q.sync('.u.upd', np.string_('ask'), self.get_ask_data())
 
                 time.sleep(1)
             except QException as e:
@@ -57,14 +57,19 @@ class PublisherThread(threading.Thread):
     def get_ask_data(self):
         c = random.randint(1, 10)
 
-        today = numpy.datetime64(datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
+        today = np.datetime64(datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
 
-        time = [numpy.timedelta64((numpy.datetime64(datetime.datetime.now()) - today), 'ms') for x in range(c)]
-        instr = ['instr_%d' % random.randint(1, 100) for x in range(c)]
-        src = ['qPython' for x in range(c)]
-        ask = [random.random() * random.randint(1, 100) for x in range(c)]
+        time = [np.timedelta64((np.datetime64(datetime.now()) - today), 'ms') for _ in range(c)]
+        instr = ['instr_%d' % random.randint(1, 100) for _ in range(c)]
+        src = ['qPython' for _ in range(c)]
+        ask = [random.random() * random.randint(1, 100) for _ in range(c)]
 
-        data = [qlist(time, qtype=QTIME_LIST), qlist(instr, qtype=QSYMBOL_LIST), qlist(src, qtype=QSYMBOL_LIST), qlist(ask, qtype=QFLOAT_LIST)]
+        data = [
+            qlist(time, qtype=QTIME_LIST),
+            qlist(instr, qtype=QSYMBOL_LIST),
+            qlist(src, qtype=QSYMBOL_LIST),
+            qlist(ask, qtype=QFLOAT_LIST)
+        ]
         print(data)
         return data
 

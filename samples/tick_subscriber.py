@@ -18,14 +18,14 @@ import numpy
 import threading
 import sys
 
-from qpython import qconnection
-from qpython.qtype import QException
-from qpython.qconnection import MessageType
-from qpython.qcollection import QTable
+from qpython3 import qconnection
+from qpython3.qtype import QException
+from qpython3.qconnection import MessageType
+from qpython3.qcollection import QTable
 
 
 class ListenerThread(threading.Thread):
-    
+
     def __init__(self, q):
         super(ListenerThread, self).__init__()
         self.q = q
@@ -41,25 +41,27 @@ class ListenerThread(threading.Thread):
         while not self.stopped():
             print('.')
             try:
-                message = self.q.receive(data_only = False, raw = False) # retrieve entire message
-                
-                if message.type != MessageType.ASYNC:
+                msg = self.q.receive(data_only=False, raw=False)  # retrieve entire message
+
+                if msg.type != MessageType.ASYNC:
                     print('Unexpected message, expected message of type: ASYNC')
-                    
-                print('type: %s, message type: %s, data size: %s, is_compressed: %s ' % (type(message), message.type, message.size, message.is_compressed))
-                
-                if isinstance(message.data, list):
+
+                print(f'type: {type(msg)}, message type: {msg.type}, '
+                      f'data size: {msg.size}, is_compressed: {msg.is_compressed}')
+
+                if isinstance(msg.data, list):
                     # unpack upd message
-                    if len(message.data) == 3 and message.data[0] == b'upd' and isinstance(message.data[2], QTable):
-                        for row in message.data[2]:
+                    if len(msg.data) == 3 and msg.data[0] == b'upd' and isinstance(
+                            msg.data[2], QTable):
+                        for row in msg.data[2]:
                             print(row)
-                
+
             except QException as e:
                 print(e)
 
 
 if __name__ == '__main__':
-    with qconnection.QConnection(host = 'localhost', port = 17010) as q:
+    with qconnection.QConnection(host='localhost', port=17010) as q:
         print(q)
         print('IPC version: %s. Is connected: %s' % (q.protocol_version, q.is_connected()))
         print('Press <ENTER> to close application')
@@ -72,7 +74,5 @@ if __name__ == '__main__':
 
         t = ListenerThread(q)
         t.start()
-        
         sys.stdin.readline()
-        
         t.stopit()

@@ -18,10 +18,10 @@ import random
 import threading
 import time
 
-from qpython import qconnection
-from qpython.qtype import QException
-from qpython.qconnection import MessageType
-from qpython.qcollection import QDictionary
+from qpython3 import qconnection
+from qpython3.qtype import QException
+from qpython3.qconnection import MessageType
+from qpython3.qcollection import QDictionary
 
 
 class ListenerThread(threading.Thread):

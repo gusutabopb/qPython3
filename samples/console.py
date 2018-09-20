@@ -14,19 +14,14 @@
 #  limitations under the License.
 #
 
-import qpython
-from qpython import qconnection
-from qpython.qtype import QException
-
-try:
-    input = raw_input
-except NameError:
-    pass
-
+import qpython3
+from qpython3 import qconnection
+from qpython3.qtype import QException
 
 if __name__ == '__main__':
-    print('qPython %s Cython extensions enabled: %s' % (qpython.__version__, qpython.__is_cython_enabled__))
-    with qconnection.QConnection(host = 'localhost', port = 5000) as q:
+    print(f'qPython {qpython3.__version__} '
+          f'Cython extensions enabled: {qpython3.__is_cython_enabled__)}')
+    with qconnection.QConnection(host='localhost', port=5000) as q:
         print(q)
         print('IPC version: %s. Is connected: %s' % (q.protocol_version, q.is_connected()))
 

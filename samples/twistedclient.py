@@ -18,16 +18,13 @@ import struct
 import sys
 
 from twisted.internet.protocol import Protocol, ClientFactory
-
 from twisted.internet import reactor
-from qpython.qconnection import MessageType, QAuthenticationException
-from qpython.qreader import QReader
-from qpython.qwriter import QWriter, QWriterException
-
+from qpython3.qconnection import MessageType, QAuthenticationException
+from qpython3.qreader import QReader
+from qpython3.qwriter import QWriter, QWriterException
 
 
 class IPCProtocol(Protocol):
-
     class State(object):
         UNKNOWN = -1
         HANDSHAKE = 0
@@ -35,7 +32,7 @@ class IPCProtocol(Protocol):
 
     def connectionMade(self):
         self.state = IPCProtocol.State.UNKNOWN
-        self.credentials = self.factory.username + ':' + self.factory.password if self.factory.password else ''
+        self.credentials = self.factory.username + ':' + (self.factory.password or '')
 
         self.transport.write(self.credentials + '\3\0')
 
@@ -63,7 +60,8 @@ class IPCProtocol(Protocol):
                         self._buffer = ''
                         buffer_len = 0
 
-                    self.factory.onMessage(self._reader.read(source=complete_message, numpy_temporals=True))
+                    self.factory.onMessage(self._reader.read(source=complete_message,
+                                                             numpy_temporals=True))
             except:
                 self.factory.onError(sys.exc_info())
                 self._message = None
@@ -102,12 +100,11 @@ class IPCProtocol(Protocol):
             self.transport.write(self._writer.write([query] + list(parameters), msg_type))
 
 
-
 class IPCClientFactory(ClientFactory):
-
     protocol = IPCProtocol
 
-    def __init__(self, username, password, connect_success_callback, connect_fail_callback, data_callback, error_callback):
+    def __init__(self, username, password, connect_success_callback, connect_fail_callback,
+                 data_callback, error_callback):
         self.username = username
         self.password = password
         self.client = None
@@ -117,7 +114,6 @@ class IPCClientFactory(ClientFactory):
         self.connect_fail_callback = connect_fail_callback
         self.data_callback = data_callback
         self.error_callback = error_callback
-
 
     def clientConnectionLost(self, connector, reason):
         print('Lost connection.  Reason: %s' % reason)
@@ -145,7 +141,6 @@ class IPCClientFactory(ClientFactory):
             self.client.query(msg_type, query, *parameters)
 
 
-
 def onConnectSuccess(source):
     print('Connected, protocol version: %s' % source.client.protocol_version)
     source.query(MessageType.SYNC, '.z.ts:{(handle)(`timestamp$100?1000000000000000000)}')
@@ -169,4 +164,3 @@ if __name__ == '__main__':
     factory = IPCClientFactory('user', 'pwd', onConnectSuccess, onConnectFail, onMessage, onError)
     reactor.connectTCP('localhost', 5000, factory)
     reactor.run()
-
