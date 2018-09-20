@@ -13,24 +13,24 @@
 #  limitations under the License.
 #
 
-import numpy
+import numpy as np
 
 
 
 def uncompress(data, uncompressed_size):
-    _0 = numpy.intc(0)
-    _1 = numpy.intc(1)
-    _2 = numpy.intc(2)
-    _128 = numpy.intc(128)
-    _255 = numpy.intc(255)
+    _0 = np.intc(0)
+    _1 = np.intc(1)
+    _2 = np.intc(2)
+    _128 = np.intc(128)
+    _255 = np.intc(255)
 
     n, r, s, p = _0, _0, _0, _0
     i, d = _1, _1
     f = _255 & data[_0]
 
-    ptrs = numpy.zeros(256, dtype = numpy.intc)
-    uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
-    idx = numpy.arange(uncompressed_size, dtype = numpy.intc)
+    ptrs = np.zeros(256, dtype = np.intc)
+    uncompressed = np.zeros(uncompressed_size, dtype = np.uint8)
+    idx = np.arange(uncompressed_size, dtype = np.intc)
 
     while s < uncompressed_size:
         pp = p + _1

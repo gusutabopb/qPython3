@@ -14,8 +14,8 @@
 #  limitations under the License.
 #
 
-from qpython import MetaData
-from qpython.qtype import *  # @UnusedWildImport
+from . import MetaData
+from .qtype import *  # @UnusedWildImport
 from numpy import longlong
 
 _MILLIS_PER_DAY = 24 * 60 * 60 * 1000
@@ -23,12 +23,10 @@ _MILLIS_PER_DAY_FLOAT = float(_MILLIS_PER_DAY)
 _QEPOCH_MS = long(10957 * _MILLIS_PER_DAY)
 _EPOCH_QTIMESTAMP_NS = _QEPOCH_MS * 1000000
 
-
-_EPOCH_QMONTH = numpy.datetime64('2000-01', 'M')
-_EPOCH_QDATE = numpy.datetime64('2000-01-01', 'D')
-_EPOCH_QDATETIME = numpy.datetime64(_QEPOCH_MS, 'ms')
-_EPOCH_TIMESTAMP = numpy.datetime64(_EPOCH_QTIMESTAMP_NS, 'ns')
-
+_EPOCH_QMONTH = np.datetime64('2000-01', 'M')
+_EPOCH_QDATE = np.datetime64('2000-01-01', 'D')
+_EPOCH_QDATETIME = np.datetime64(_QEPOCH_MS, 'ms')
+_EPOCH_TIMESTAMP = np.datetime64(_EPOCH_QTIMESTAMP_NS, 'ns')
 
 _QMONTH_NULL = qnull(QMONTH)
 _QDATE_NULL = qnull(QDATE)
@@ -38,7 +36,6 @@ _QSECOND_NULL = qnull(QSECOND)
 _QTIME_NULL = qnull(QTIME)
 _QTIMESTAMP_NULL = qnull(QTIMESTAMP)
 _QTIMESPAN_NULL = qnull(QTIMESPAN)
-
 
 
 class QTemporal(object):
@@ -71,12 +68,11 @@ class QTemporal(object):
 
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
-            and self.meta.qtype == other.meta.qtype
-            and self._datetime == other._datetime)
+                and self.meta.qtype == other.meta.qtype
+                and self._datetime == other._datetime)
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
 
 
 def qtemporal(dt, **meta):
@@ -85,9 +81,9 @@ def qtemporal(dt, **meta):
     
     Examples:
     
-       >>> qtemporal(numpy.datetime64('2001-01-01', 'D'), qtype=QDATE)
+       >>> qtemporal(np.datetime64('2001-01-01', 'D'), qtype=QDATE)
        2001-01-01 [metadata(qtype=-14)]
-       >>> qtemporal(numpy.timedelta64(43499123, 'ms'), qtype=QTIME)
+       >>> qtemporal(np.timedelta64(43499123, 'ms'), qtype=QTIME)
        43499123 milliseconds [metadata(qtype=-19)]
        >>> qtemporal(qnull(QDATETIME), qtype=QDATETIME)
        nan [metadata(qtype=-15)]
@@ -104,7 +100,6 @@ def qtemporal(dt, **meta):
     return result
 
 
-
 def from_raw_qtemporal(raw, qtype):
     '''
     Converts raw numeric value to `numpy.datetime64` or `numpy.timedelta64`
@@ -119,7 +114,6 @@ def from_raw_qtemporal(raw, qtype):
     :returns: `numpy.datetime64` or `numpy.timedelta64` - converted datetime
     '''
     return _FROM_Q[qtype](raw)
-
 
 
 def to_raw_qtemporal(dt, qtype):
@@ -139,7 +133,6 @@ def to_raw_qtemporal(dt, qtype):
     return _TO_Q[qtype](dt)
 
 
-
 def array_from_raw_qtemporal(raw, qtype):
     '''
     Converts `numpy.array` containing raw q representation to ``datetime64``/``timedelta64``
@@ -147,7 +140,7 @@ def array_from_raw_qtemporal(raw, qtype):
     
     Examples:
     
-      >>> raw = numpy.array([366, 121, qnull(QDATE)])
+      >>> raw = np.array([366, 121, qnull(QDATE)])
       >>> print(array_from_raw_qtemporal(raw, qtype = QDATE))
       ['2001-01-01' '2000-05-01' 'NaT']
     
@@ -159,8 +152,9 @@ def array_from_raw_qtemporal(raw, qtype):
     
     :raises: `ValueError`
     '''
-    if not isinstance(raw, numpy.ndarray):
-        raise ValueError('raw parameter is expected to be of type: numpy.ndarray. Was: %s' % type(raw))
+    if not isinstance(raw, np.ndarray):
+        raise ValueError(
+            'raw parameter is expected to be of type: numpy.ndarray. Was: %s' % type(raw))
 
     qtype = -abs(qtype)
     conversion = _FROM_RAW_LIST[qtype]
@@ -172,9 +166,8 @@ def array_from_raw_qtemporal(raw, qtype):
 
     array = conversion(array) if conversion else array
     null = _NUMPY_NULL[qtype]
-    array = numpy.where(mask, null, array)
+    array = np.where(mask, null, array)
     return array
-
 
 
 def array_to_raw_qtemporal(array, qtype):
@@ -184,10 +177,10 @@ def array_to_raw_qtemporal(array, qtype):
     
     Examples:
     
-      >>> na_dt = numpy.arange('1999-01-01', '2005-12-31', dtype='datetime64[D]')
+      >>> na_dt = np.arange('1999-01-01', '2005-12-31', dtype='datetime64[D]')
       >>> print(array_to_raw_qtemporal(na_dt, qtype = QDATE_LIST))
       [-365 -364 -363 ..., 2188 2189 2190]
-      >>> array_to_raw_qtemporal(numpy.arange(-20, 30, dtype='int32'), qtype = QDATE_LIST)
+      >>> array_to_raw_qtemporal(np.arange(-20, 30, dtype='int32'), qtype=QDATE_LIST)
       Traceback (most recent call last):
         ...
       ValueError: array.dtype is expected to be of type: datetime64 or timedelta64. Was: int32
@@ -200,234 +193,214 @@ def array_to_raw_qtemporal(array, qtype):
     
     :raises: `ValueError`
     '''
-    if not isinstance(array, numpy.ndarray):
-        raise ValueError('array parameter is expected to be of type: numpy.ndarray. Was: %s' % type(array))
+    if not isinstance(array, np.ndarray):
+        raise ValueError(
+            'array parameter is expected to be of type: numpy.ndarray. Was: %s' % type(array))
 
-    if not array.dtype.type in (numpy.datetime64, numpy.timedelta64):
-        raise ValueError('array.dtype is expected to be of type: datetime64 or timedelta64. Was: %s' % array.dtype)
+    if not array.dtype.type in (np.datetime64, np.timedelta64):
+        raise ValueError(
+            'array.dtype is expected to be of type: datetime64 or timedelta64. Was: %s' % array.dtype)
 
     qtype = -abs(qtype)
     conversion = _TO_RAW_LIST[qtype]
-    raw = array.view(numpy.int64).view(numpy.ndarray)
-    mask = raw == numpy.int64(-2 ** 63)
+    raw = array.view(np.int64).view(np.ndarray)
+    mask = raw == np.int64(-2 ** 63)
 
     raw = conversion(raw) if conversion else raw
     null = qnull(qtype)
-    raw = numpy.where(mask, null, raw)
+    raw = np.where(mask, null, raw)
     return raw
-
 
 
 def _from_qmonth(raw):
     if raw == _QMONTH_NULL:
         return _NUMPY_NULL[QMONTH]
     else:
-        return _EPOCH_QMONTH + numpy.timedelta64(int(raw), 'M')
-
+        return _EPOCH_QMONTH + np.timedelta64(int(raw), 'M')
 
 
 def _to_qmonth(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int32:
+    if t_dt == np.int32:
         return dt
-    elif t_dt == numpy.datetime64:
+    elif t_dt == np.datetime64:
         return (dt - _EPOCH_QMONTH).astype(int) if not dt == _NUMPY_NULL[QMONTH] else _QMONTH_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
-
 
 
 def _from_qdate(raw):
     if raw == _QDATE_NULL:
         return _NUMPY_NULL[QDATE]
     else:
-        return _EPOCH_QDATE + numpy.timedelta64(int(raw), 'D')
-
+        return _EPOCH_QDATE + np.timedelta64(int(raw), 'D')
 
 
 def _to_qdate(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int32:
+    if t_dt == np.int32:
         return dt
-    elif t_dt == numpy.datetime64:
+    elif t_dt == np.datetime64:
         return (dt - _EPOCH_QDATE).astype(int) if not dt == _NUMPY_NULL[QDATE] else _QDATE_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
 
-
 def _from_qdatetime(raw):
-    if numpy.isnan(raw) or raw == _QDATETIME_NULL:
+    if np.isnan(raw) or raw == _QDATETIME_NULL:
         return _NUMPY_NULL[QDATETIME]
     else:
-        return _EPOCH_QDATETIME + numpy.timedelta64(long(_MILLIS_PER_DAY * raw), 'ms')
-
+        return _EPOCH_QDATETIME + np.timedelta64(long(_MILLIS_PER_DAY * raw), 'ms')
 
 
 def _to_qdatetime(dt):
     t_dt = type(dt)
-    if t_dt == numpy.float64:
+    if t_dt == np.float64:
         return dt
-    elif t_dt == numpy.datetime64:
-        return (dt - _EPOCH_QDATETIME).astype(float) / _MILLIS_PER_DAY if not dt == _NUMPY_NULL[QDATETIME] else _QDATETIME_NULL
+    elif t_dt == np.datetime64:
+        return (dt - _EPOCH_QDATETIME).astype(float) / _MILLIS_PER_DAY if not dt == _NUMPY_NULL[
+            QDATETIME] else _QDATETIME_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
-
 
 
 def _from_qminute(raw):
     if raw == _QMINUTE_NULL:
         return _NUMPY_NULL[QMINUTE]
     else:
-        return numpy.timedelta64(int(raw), 'm')
-
+        return np.timedelta64(int(raw), 'm')
 
 
 def _to_qminute(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int32:
+    if t_dt == np.int32:
         return dt
-    elif t_dt == numpy.timedelta64:
+    elif t_dt == np.timedelta64:
         return dt.astype(int) if not dt == _NUMPY_NULL[QMINUTE] else _QMINUTE_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
-
 
 
 def _from_qsecond(raw):
     if raw == _QSECOND_NULL:
         return _NUMPY_NULL[QSECOND]
     else:
-        return numpy.timedelta64(int(raw), 's')
-
+        return np.timedelta64(int(raw), 's')
 
 
 def _to_qsecond(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int32:
+    if t_dt == np.int32:
         return dt
-    elif t_dt == numpy.timedelta64:
+    elif t_dt == np.timedelta64:
         return dt.astype(int) if not dt == _NUMPY_NULL[QSECOND] else _QSECOND_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
-
 
 
 def _from_qtime(raw):
     if raw == _QTIME_NULL:
         return _NUMPY_NULL[QTIME]
     else:
-        return numpy.timedelta64(int(raw), 'ms')
-
+        return np.timedelta64(int(raw), 'ms')
 
 
 def _to_qtime(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int32:
+    if t_dt == np.int32:
         return dt
-    elif t_dt == numpy.timedelta64:
+    elif t_dt == np.timedelta64:
         return dt.astype(int) if not dt == _NUMPY_NULL[QTIME] else _QTIME_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
-
 
 
 def _from_qtimestamp(raw):
     if raw == _QTIMESTAMP_NULL:
         return _NUMPY_NULL[QTIMESTAMP]
     else:
-        return _EPOCH_TIMESTAMP + numpy.timedelta64(long(raw), 'ns')
-
+        return _EPOCH_TIMESTAMP + np.timedelta64(long(raw), 'ns')
 
 
 def _to_qtimestamp(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int64:
+    if t_dt == np.int64:
         return dt
-    elif t_dt == numpy.datetime64:
-        return (dt - _EPOCH_TIMESTAMP).astype(longlong) if not dt == _NUMPY_NULL[QTIMESTAMP] else _QTIMESTAMP_NULL
+    elif t_dt == np.datetime64:
+        return (dt - _EPOCH_TIMESTAMP).astype(longlong) if not dt == _NUMPY_NULL[
+            QTIMESTAMP] else _QTIMESTAMP_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
-
 
 
 def _from_qtimespan(raw):
     if raw == _QTIMESPAN_NULL:
         return _NUMPY_NULL[QTIMESPAN]
     else:
-        return numpy.timedelta64(long(raw), 'ns')
-
+        return np.timedelta64(long(raw), 'ns')
 
 
 def _to_qtimespan(dt):
     t_dt = type(dt)
-    if t_dt == numpy.int64:
+    if t_dt == np.int64:
         return dt
-    elif t_dt == numpy.timedelta64:
+    elif t_dt == np.timedelta64:
         return dt.astype(longlong) if not dt == _NUMPY_NULL[QTIMESPAN] else _QTIMESTAMP_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
 
-
 _FROM_Q = {
-           QMONTH:          _from_qmonth,
-           QDATE:           _from_qdate,
-           QDATETIME:       _from_qdatetime,
-           QMINUTE:         _from_qminute,
-           QSECOND:         _from_qsecond,
-           QTIME:           _from_qtime,
-           QTIMESTAMP:      _from_qtimestamp,
-           QTIMESPAN:       _from_qtimespan,
-           }
-
-
+    QMONTH: _from_qmonth,
+    QDATE: _from_qdate,
+    QDATETIME: _from_qdatetime,
+    QMINUTE: _from_qminute,
+    QSECOND: _from_qsecond,
+    QTIME: _from_qtime,
+    QTIMESTAMP: _from_qtimestamp,
+    QTIMESPAN: _from_qtimespan,
+}
 
 _TO_Q = {
-         QMONTH:            _to_qmonth,
-         QDATE:             _to_qdate,
-         QDATETIME:         _to_qdatetime,
-         QMINUTE:           _to_qminute,
-         QSECOND:           _to_qsecond,
-         QTIME:             _to_qtime,
-         QTIMESTAMP:        _to_qtimestamp,
-         QTIMESPAN:         _to_qtimespan,
-         }
-
+    QMONTH: _to_qmonth,
+    QDATE: _to_qdate,
+    QDATETIME: _to_qdatetime,
+    QMINUTE: _to_qminute,
+    QSECOND: _to_qsecond,
+    QTIME: _to_qtime,
+    QTIMESTAMP: _to_qtimestamp,
+    QTIMESPAN: _to_qtimespan,
+}
 
 _TO_RAW_LIST = {
-                QMONTH:      lambda a: (a - 360).astype(numpy.int32),
-                QDATE:       lambda a: (a - 10957).astype(numpy.int32),
-                QDATETIME:   lambda a: ((a - _QEPOCH_MS) / _MILLIS_PER_DAY_FLOAT).astype(numpy.float64),
-                QMINUTE:     lambda a: a.astype(numpy.int32),
-                QSECOND:     lambda a: a.astype(numpy.int32),
-                QTIME:       lambda a: a.astype(numpy.int32),
-                QTIMESTAMP:  lambda a: a - _EPOCH_QTIMESTAMP_NS,
-                QTIMESPAN:   None,
-                }
-
-
+    QMONTH: lambda a: (a - 360).astype(np.int32),
+    QDATE: lambda a: (a - 10957).astype(np.int32),
+    QDATETIME: lambda a: ((a - _QEPOCH_MS) / _MILLIS_PER_DAY_FLOAT).astype(np.float64),
+    QMINUTE: lambda a: a.astype(np.int32),
+    QSECOND: lambda a: a.astype(np.int32),
+    QTIME: lambda a: a.astype(np.int32),
+    QTIMESTAMP: lambda a: a - _EPOCH_QTIMESTAMP_NS,
+    QTIMESPAN: None,
+}
 
 _FROM_RAW_LIST = {
-                  QMONTH:      lambda a: numpy.array((a + 360), dtype = 'datetime64[M]'),
-                  QDATE:       lambda a: numpy.array((a + 10957), dtype = 'datetime64[D]'),
-                  QDATETIME:   lambda a: numpy.array((a * _MILLIS_PER_DAY + _QEPOCH_MS), dtype = 'datetime64[ms]'),
-                  QMINUTE:     lambda a: numpy.array(a, dtype = 'timedelta64[m]'),
-                  QSECOND:     lambda a: numpy.array(a, dtype = 'timedelta64[s]'),
-                  QTIME:       lambda a: numpy.array(a, dtype = 'timedelta64[ms]'),
-                  QTIMESTAMP:  lambda a: numpy.array((a + _EPOCH_QTIMESTAMP_NS), dtype = 'datetime64[ns]'),
-                  QTIMESPAN:   lambda a: numpy.array(a, dtype = 'timedelta64[ns]'),
-                  }
-
-
+    QMONTH: lambda a: np.array((a + 360), dtype='datetime64[M]'),
+    QDATE: lambda a: np.array((a + 10957), dtype='datetime64[D]'),
+    QDATETIME: lambda a: np.array((a * _MILLIS_PER_DAY + _QEPOCH_MS), dtype='datetime64[ms]'),
+    QMINUTE: lambda a: np.array(a, dtype='timedelta64[m]'),
+    QSECOND: lambda a: np.array(a, dtype='timedelta64[s]'),
+    QTIME: lambda a: np.array(a, dtype='timedelta64[ms]'),
+    QTIMESTAMP: lambda a: np.array((a + _EPOCH_QTIMESTAMP_NS), dtype='datetime64[ns]'),
+    QTIMESPAN: lambda a: np.array(a, dtype='timedelta64[ns]'),
+}
 
 _NUMPY_NULL = {
-               QMONTH:      numpy.datetime64('NaT', 'M'),
-               QDATE:       numpy.datetime64('NaT', 'D'),
-               QDATETIME:   numpy.datetime64('NaT', 'ms'),
-               QMINUTE:     numpy.timedelta64('NaT', 'm'),
-               QSECOND:     numpy.timedelta64('NaT', 's'),
-               QTIME:       numpy.timedelta64('NaT', 'ms'),
-               QTIMESTAMP:  numpy.datetime64('NaT', 'ns'),
-               QTIMESPAN:   numpy.timedelta64('NaT', 'ns'),
-               }
+    QMONTH: np.datetime64('NaT', 'M'),
+    QDATE: np.datetime64('NaT', 'D'),
+    QDATETIME: np.datetime64('NaT', 'ms'),
+    QMINUTE: np.timedelta64('NaT', 'm'),
+    QSECOND: np.timedelta64('NaT', 's'),
+    QTIME: np.timedelta64('NaT', 'ms'),
+    QTIMESTAMP: np.datetime64('NaT', 'ns'),
+    QTIMESPAN: np.timedelta64('NaT', 'ns'),
+}

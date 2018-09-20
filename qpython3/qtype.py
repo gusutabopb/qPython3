@@ -85,7 +85,7 @@ QERROR                 -0x80
 ==================     =============
 '''
 
-import numpy
+import numpy as np
 import re
 import uuid
 import sys
@@ -161,47 +161,47 @@ ATOM_SIZE = ( 0, 1, 16, 0, 1, 2, 4, 8, 4, 8, 1, 0, 8, 4, 4, 8, 8, 4, 4, 4 )
 
 # mapping of q atoms to corresponding Python types
 PY_TYPE = {
-    QBOOL:          numpy.bool_,
-    QBYTE:          numpy.byte,
-    QGUID:          numpy.object_,
-    QSHORT:         numpy.int16,
-    QINT:           numpy.int32,
-    QLONG:          numpy.int64,
-    QFLOAT:         numpy.float32,
-    QDOUBLE:        numpy.float64,
-    QCHAR:          numpy.byte,
-    QSYMBOL:        numpy.string_,
-    QMONTH:         numpy.int32,
-    QDATE:          numpy.int32,
-    QDATETIME:      numpy.float64,
-    QMINUTE:        numpy.int32,
-    QSECOND:        numpy.int32,
-    QTIME:          numpy.int32,
-    QTIMESTAMP:     numpy.int64,
-    QTIMESPAN:      numpy.int64,
+    QBOOL:          np.bool_,
+    QBYTE:          np.byte,
+    QGUID:          np.object_,
+    QSHORT:         np.int16,
+    QINT:           np.int32,
+    QLONG:          np.int64,
+    QFLOAT:         np.float32,
+    QDOUBLE:        np.float64,
+    QCHAR:          np.byte,
+    QSYMBOL:        np.string_,
+    QMONTH:         np.int32,
+    QDATE:          np.int32,
+    QDATETIME:      np.float64,
+    QMINUTE:        np.int32,
+    QSECOND:        np.int32,
+    QTIME:          np.int32,
+    QTIMESTAMP:     np.int64,
+    QTIMESPAN:      np.int64,
     # artificial qtype for convenient conversion of string lists
-    QSTRING_LIST:   numpy.object_,
+    QSTRING_LIST:   np.object_,
     }
 
 
 # mapping of Python types to corresponding q atoms
 Q_TYPE = {
-    bool             : QBOOL,
-    numpy.bool       : QBOOL,
-    numpy.bool_      : QBOOL,
-    numpy.byte       : QBYTE,
-    numpy.int16      : QSHORT,
-    int              : QINT,
-    numpy.int32      : QINT,
-    long             : QLONG,
-    numpy.int64      : QLONG,
-    numpy.float32    : QFLOAT,
-    float            : QDOUBLE,
-    numpy.float64    : QDOUBLE,
-    str              : QSTRING,
-    bytes            : QSTRING,
-    numpy.string_    : QSYMBOL,
-    uuid.UUID        : QGUID,
+    bool          : QBOOL,
+    np.bool       : QBOOL,
+    np.bool_      : QBOOL,
+    np.byte       : QBYTE,
+    np.int16      : QSHORT,
+    int           : QINT,
+    np.int32      : QINT,
+    long          : QLONG,
+    np.int64      : QLONG,
+    np.float32    : QFLOAT,
+    float         : QDOUBLE,
+    np.float64    : QDOUBLE,
+    str           : QSTRING,
+    bytes         : QSTRING,
+    np.string_    : QSYMBOL,
+    uuid.UUID     : QGUID,
     }
 
 
@@ -255,31 +255,31 @@ STRUCT_MAP = {
 
 
 # null definitions
-_QNULL1 = numpy.int8(-2**7)
-_QNULL2 = numpy.int16(-2**15)
-_QNULL4 = numpy.int32(-2**31)
-_QNULL8 = numpy.int64(-2**63)
-_QNAN32 = numpy.fromstring(b'\x00\x00\xc0\x7f', dtype=numpy.float32)[0]
-_QNAN64 = numpy.fromstring(b'\x00\x00\x00\x00\x00\x00\xf8\x7f', dtype=numpy.float64)[0]
-_QNULL_BOOL = numpy.bool_(False)
-_QNULL_SYM = numpy.string_('')
+_QNULL1 = np.int8(-2**7)
+_QNULL2 = np.int16(-2**15)
+_QNULL4 = np.int32(-2**31)
+_QNULL8 = np.int64(-2**63)
+_QNAN32 = np.fromstring(b'\x00\x00\xc0\x7f', dtype=np.float32)[0]
+_QNAN64 = np.fromstring(b'\x00\x00\x00\x00\x00\x00\xf8\x7f', dtype=np.float64)[0]
+_QNULL_BOOL = np.bool_(False)
+_QNULL_SYM = np.string_('')
 _QNULL_GUID = uuid.UUID('00000000-0000-0000-0000-000000000000')
 
 
 QNULLMAP = {
     QGUID:       ('0Ng',    _QNULL_GUID,         lambda v: v == _QNULL_GUID),
-    QBOOL:       ('0b',     _QNULL_BOOL,         lambda v: v == numpy.bool_(False)),
+    QBOOL:       ('0b',     _QNULL_BOOL,         lambda v: v == np.bool_(False)),
     QBYTE:       ('0x00',   _QNULL1,             lambda v: v == _QNULL1),
     QSHORT:      ('0Nh',    _QNULL2,             lambda v: v == _QNULL2),
     QINT:        ('0N',     _QNULL4,             lambda v: v == _QNULL4),
     QLONG:       ('0Nj',    _QNULL8,             lambda v: v == _QNULL8),
-    QFLOAT:      ('0Ne',    _QNAN32,             lambda v: numpy.isnan(v)),
-    QDOUBLE:     ('0n',     _QNAN64,             lambda v: numpy.isnan(v)),
+    QFLOAT:      ('0Ne',    _QNAN32,             lambda v: np.isnan(v)),
+    QDOUBLE:     ('0n',     _QNAN64,             lambda v: np.isnan(v)),
     QSTRING:     ('" "',    b' ',                 lambda v: v == b' '),
     QSYMBOL:     ('`',      _QNULL_SYM,          lambda v: v == _QNULL_SYM),
     QMONTH:      ('0Nm',    _QNULL4,             lambda v: v == _QNULL4),
     QDATE:       ('0Nd',    _QNULL4,             lambda v: v == _QNULL4),
-    QDATETIME:   ('0Nz',    _QNAN64,             lambda v: numpy.isnan(v)),
+    QDATETIME:   ('0Nz',    _QNAN64,             lambda v: np.isnan(v)),
     QMINUTE:     ('0Nu',    _QNULL4,             lambda v: v == _QNULL4),
     QSECOND:     ('0Nv',    _QNULL4,             lambda v: v == _QNULL4),
     QTIME:       ('0Nt',    _QNULL4,             lambda v: v == _QNULL4),
