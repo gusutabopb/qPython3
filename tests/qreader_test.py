@@ -25,7 +25,7 @@ if sys.version > '3':
 from collections import OrderedDict
 from qpython3 import qreader
 from qpython3.qtype import *  # @UnusedWildImport
-from qpython3.qcollection import qlist, QList, QTemporalList, QDictionary, qtable, QKeyedTable
+from qpython3.qcollection import qlist, QList, QTemporalList, QDictionary, qtable, QKeyedTable, QTable
 from qpython3.qtemporal import qtemporal, QTemporal
 
 
@@ -41,7 +41,7 @@ EXPRESSIONS = OrderedDict((
     (b'2001.01.01',                                    qtemporal(np.datetime64('2001-01-01', 'D'), qtype=QDATE)),
     (b'0Nd',                                           qtemporal(np.datetime64('NaT', 'D'), qtype=QDATE)),
     (b'2000.01.04T05:36:57.600 0Nz',                   qlist(np.array([3.234, qnull(QDATETIME)]), qtype=QDATETIME_LIST)),
-    (b'2000.01.04T05:36:57.600',                       qtemporal(np.datetime64('2000-01-04T05:36:57.600Z', 'ms'), qtype=QDATETIME)),
+    (b'2000.01.04T05:36:57.600',                       qtemporal(np.datetime64('2000-01-04T05:36:57.600', 'ms'), qtype=QDATETIME)),
     (b'0Nz',                                           qtemporal(np.datetime64('NaT', 'ms'), qtype=QDATETIME)),
     (b'12:01 0Nu',                                     qlist(np.array([721, qnull(QMINUTE)]), qtype=QMINUTE_LIST)),
     (b'12:01',                                         qtemporal(np.timedelta64(721, 'm'), qtype=QMINUTE)),
@@ -53,7 +53,7 @@ EXPRESSIONS = OrderedDict((
     (b'12:04:59.123',                                  qtemporal(np.timedelta64(43499123, 'ms'), qtype=QTIME)),
     (b'0Nt',                                           qtemporal(np.timedelta64('NaT', 'ms'), qtype=QTIME)),
     (b'2000.01.04D05:36:57.600 0Np',                   qlist(np.array([long(279417600000000), qnull(QTIMESTAMP)]), qtype=QTIMESTAMP_LIST)),
-    (b'2000.01.04D05:36:57.600',                       qtemporal(np.datetime64('2000-01-04T05:36:57.600Z', 'ns'), qtype=QTIMESTAMP)),
+    (b'2000.01.04D05:36:57.600',                       qtemporal(np.datetime64('2000-01-04T05:36:57.600', 'ns'), qtype=QTIMESTAMP)),
     (b'0Np',                                           qtemporal(np.datetime64('NaT', 'ns'), qtype=QTIMESTAMP)),
     (b'0D05:36:57.600 0Nn',                            qlist(np.array([long(20217600000000), qnull(QTIMESPAN)]), qtype=QTIMESPAN_LIST)),
     (b'0D05:36:57.600',                                qtemporal(np.timedelta64(20217600000000, 'ns'), qtype=QTIMESPAN)),
@@ -199,8 +199,8 @@ NUMPY_TEMPORAL_EXPRESSIONS = OrderedDict((
     (b'2001.01.01 2000.05.01 0Nd',    qlist(np.array([np.datetime64('2001-01-01'), np.datetime64('2000-05-01'), np.datetime64('NaT')], dtype='datetime64[D]'), qtype=QDATE_LIST)),
     (b'2001.01.01',                   np.datetime64('2001-01-01', 'D')),
     (b'0Nd',                          np.datetime64('NaT', 'D')),
-    (b'2000.01.04T05:36:57.600 0Nz',  qlist(np.array([np.datetime64('2000-01-04T05:36:57.600Z', 'ms'), np.datetime64('nat', 'ms')]), qtype = QDATETIME_LIST)),
-    (b'2000.01.04T05:36:57.600',      np.datetime64('2000-01-04T05:36:57.600Z', 'ms')),
+    (b'2000.01.04T05:36:57.600 0Nz',  qlist(np.array([np.datetime64('2000-01-04T05:36:57.600', 'ms'), np.datetime64('nat', 'ms')]), qtype = QDATETIME_LIST)),
+    (b'2000.01.04T05:36:57.600',      np.datetime64('2000-01-04T05:36:57.600', 'ms')),
     (b'0Nz',                          np.datetime64('NaT', 'ms')),
     (b'12:01 0Nu',                    qlist(np.array([np.timedelta64(721, 'm'), np.timedelta64('nat', 'm')]), qtype = QMINUTE)),
     (b'12:01',                        np.timedelta64(721, 'm')),
@@ -211,8 +211,8 @@ NUMPY_TEMPORAL_EXPRESSIONS = OrderedDict((
     (b'12:04:59.123 0Nt',             qlist(np.array([np.timedelta64(43499123, 'ms'), np.timedelta64('nat', 'ms')]), qtype = QTIME_LIST)),
     (b'12:04:59.123',                 np.timedelta64(43499123, 'ms')),
     (b'0Nt',                          np.timedelta64('NaT', 'ms')),
-    (b'2000.01.04D05:36:57.600 0Np',  qlist(np.array([np.datetime64('2000-01-04T05:36:57.600Z', 'ns'), np.datetime64('nat', 'ns')]), qtype = QTIMESTAMP_LIST)),
-    (b'2000.01.04D05:36:57.600',      np.datetime64('2000-01-04T05:36:57.600Z', 'ns')),
+    (b'2000.01.04D05:36:57.600 0Np',  qlist(np.array([np.datetime64('2000-01-04T05:36:57.600', 'ns'), np.datetime64('nat', 'ns')]), qtype = QTIMESTAMP_LIST)),
+    (b'2000.01.04D05:36:57.600',      np.datetime64('2000-01-04T05:36:57.600', 'ns')),
     (b'0Np',                          np.datetime64('NaT', 'ns')),
     (b'0D05:36:57.600 0Nn',           qlist(np.array([np.timedelta64(20217600000000, 'ns'), np.timedelta64('nat', 'ns')]), qtype = QTIMESPAN_LIST)),
     (b'0D05:36:57.600',               np.timedelta64(20217600000000, 'ns')),
@@ -270,12 +270,20 @@ def arrays_equal(left, right):
 def compare(left, right):
     if type(left) in [float, np.float32, np.float64] and np.isnan(left):
         return np.isnan(right)
+    if type(left) in [np.datetime64, np.timedelta64] and np.isnat(left):
+        return np.isnat(right)
     if type(left) == QTemporal and isinstance(left.raw, float) and np.isnan(left.raw):
         return np.isnan(right.raw)
+    elif type(left) == QTemporal and isinstance(left.raw, np.datetime64) and np.isnat(left.raw):
+        return np.isnat(right.raw)
+    elif type(left) == QTemporal and isinstance(left.raw, np.timedelta64) and np.isnat(left.raw):
+        return np.isnat(right.raw)
     elif type(left) in [list, tuple, np.ndarray, QList, QTemporalList]:
         return arrays_equal(left, right)
     elif type(left) == QFunction:
         return type(right) == QFunction
+    elif type(left) == QTable:
+        return left.dtype == right.dtype and all(arrays_equal(left[n],right[n]) for n in left.dtype.names)
     else:
         return left == right
 

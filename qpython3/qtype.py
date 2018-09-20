@@ -259,8 +259,8 @@ _QNULL1 = np.int8(-2**7)
 _QNULL2 = np.int16(-2**15)
 _QNULL4 = np.int32(-2**31)
 _QNULL8 = np.int64(-2**63)
-_QNAN32 = np.fromstring(b'\x00\x00\xc0\x7f', dtype=np.float32)[0]
-_QNAN64 = np.fromstring(b'\x00\x00\x00\x00\x00\x00\xf8\x7f', dtype=np.float64)[0]
+_QNAN32 = np.frombuffer(b'\x00\x00\xc0\x7f', dtype=np.float32)[0]
+_QNAN64 = np.frombuffer(b'\x00\x00\x00\x00\x00\x00\xf8\x7f', dtype=np.float64)[0]
 _QNULL_BOOL = np.bool_(False)
 _QNULL_SYM = np.string_('')
 _QNULL_GUID = uuid.UUID('00000000-0000-0000-0000-000000000000')

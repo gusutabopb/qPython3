@@ -224,7 +224,7 @@ def _to_qmonth(dt):
     if t_dt == np.int32:
         return dt
     elif t_dt == np.datetime64:
-        return (dt - _EPOCH_QMONTH).astype(int) if not dt == _NUMPY_NULL[QMONTH] else _QMONTH_NULL
+        return (dt - _EPOCH_QMONTH).astype(int) if not (np.isnat(dt) or dt == _NUMPY_NULL[QMONTH]) else _QMONTH_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -241,7 +241,7 @@ def _to_qdate(dt):
     if t_dt == np.int32:
         return dt
     elif t_dt == np.datetime64:
-        return (dt - _EPOCH_QDATE).astype(int) if not dt == _NUMPY_NULL[QDATE] else _QDATE_NULL
+        return (dt - _EPOCH_QDATE).astype(int) if not (np.isnat(dt) or dt == _NUMPY_NULL[QDATE]) else _QDATE_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -258,8 +258,8 @@ def _to_qdatetime(dt):
     if t_dt == np.float64:
         return dt
     elif t_dt == np.datetime64:
-        return (dt - _EPOCH_QDATETIME).astype(float) / _MILLIS_PER_DAY if not dt == _NUMPY_NULL[
-            QDATETIME] else _QDATETIME_NULL
+        return ((dt - _EPOCH_QDATETIME).astype(float) / _MILLIS_PER_DAY
+                if not (np.isnat(dt) or dt == _NUMPY_NULL[QDATETIME]) else _QDATETIME_NULL)
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -276,7 +276,7 @@ def _to_qminute(dt):
     if t_dt == np.int32:
         return dt
     elif t_dt == np.timedelta64:
-        return dt.astype(int) if not dt == _NUMPY_NULL[QMINUTE] else _QMINUTE_NULL
+        return dt.astype(int) if not (np.isnat(dt) or dt == _NUMPY_NULL[QMINUTE]) else _QMINUTE_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -293,7 +293,7 @@ def _to_qsecond(dt):
     if t_dt == np.int32:
         return dt
     elif t_dt == np.timedelta64:
-        return dt.astype(int) if not dt == _NUMPY_NULL[QSECOND] else _QSECOND_NULL
+        return dt.astype(int) if not (np.isnat(dt) or dt == _NUMPY_NULL[QSECOND]) else _QSECOND_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -310,7 +310,7 @@ def _to_qtime(dt):
     if t_dt == np.int32:
         return dt
     elif t_dt == np.timedelta64:
-        return dt.astype(int) if not dt == _NUMPY_NULL[QTIME] else _QTIME_NULL
+        return dt.astype(int) if not (np.isnat(dt) or dt == _NUMPY_NULL[QTIME]) else _QTIME_NULL
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -327,8 +327,8 @@ def _to_qtimestamp(dt):
     if t_dt == np.int64:
         return dt
     elif t_dt == np.datetime64:
-        return (dt - _EPOCH_TIMESTAMP).astype(longlong) if not dt == _NUMPY_NULL[
-            QTIMESTAMP] else _QTIMESTAMP_NULL
+        return ((dt - _EPOCH_TIMESTAMP).astype(longlong)
+                if not (np.isnat(dt) or dt == _NUMPY_NULL[QTIMESTAMP]) else _QTIMESTAMP_NULL)
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 
@@ -345,7 +345,9 @@ def _to_qtimespan(dt):
     if t_dt == np.int64:
         return dt
     elif t_dt == np.timedelta64:
-        return dt.astype(longlong) if not dt == _NUMPY_NULL[QTIMESPAN] else _QTIMESTAMP_NULL
+        return (dt.astype(longlong)
+                if not (np.isnat(dt) or dt == _NUMPY_NULL[QTIMESPAN])
+                else _QTIMESTAMP_NULL)
     else:
         raise ValueError('Cannot convert %s of type %s to q value.' % (dt, type(dt)))
 

@@ -143,7 +143,10 @@ class QWriter(object):
         try:
             self._buffer.write(struct.pack('b', qtype))
             fmt = STRUCT_MAP[qtype]
-            self._buffer.write(struct.pack(fmt, data))
+            if isinstance(data, np.bool_):
+                self._buffer.write(struct.pack(fmt, bool(data)))
+            else:
+                self._buffer.write(struct.pack(fmt, data))
         except KeyError:
             t = data.__class__ if isinstance(data, object) else type(data)
             raise QWriterException(f'Unable to serialize type: {t!r}')

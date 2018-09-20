@@ -195,7 +195,7 @@ def test_array_to_raw_qtemporal():
         assert na[x] == x - 365
         x += 1
 
-    na_dt = np.arange('1999-01-01T00:00:00.000Z', '2001-01-04T05:36:57.600Z', 12345678, dtype='datetime64[ms]')
+    na_dt = np.arange('1999-01-01T00:00:00.000', '2001-01-04T05:36:57.600', 12345678, dtype='datetime64[ms]')
     na = array_to_raw_qtemporal(na_dt, qtype=QDATETIME_LIST)
     assert na.dtype == np.float64
 
@@ -208,7 +208,7 @@ def test_array_to_raw_qtemporal():
         ref = (x * step) - 365
         assert abs(na[x] - ref) < 0.1, '%s %s' %(na[x], ref)
 
-    na_dt = np.arange('1999-01-01T00:00:00.000Z', '2001-01-04T05:36:57.600Z', 1234567890000, dtype='datetime64[ns]')
+    na_dt = np.arange('1999-01-01T00:00:00.000', '2001-01-04T05:36:57.600', 1234567890000, dtype='datetime64[ns]')
     na = array_to_raw_qtemporal(na_dt, qtype=QTIMESTAMP_LIST)
     assert na.dtype == np.int64
 
@@ -249,7 +249,7 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('datetime64[M]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.datetime64('NaT', 'M'):
+        if not np.isnat(na_dt[x]):
             assert na_dt[x].astype(int) == raw[x] + 360
         else:
             assert raw[x] == qnull(QMONTH)
@@ -259,7 +259,7 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('datetime64[D]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.datetime64('NaT', 'D'):
+        if not np.isnat(na_dt[x]):
             assert na_dt[x].astype(int) == raw[x] + 10957
         else:
             assert raw[x] == qnull(QDATE)
@@ -269,7 +269,7 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('timedelta64[m]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.timedelta64('NaT', 'm'):
+        if not np.isnat(na_dt[x]):
             assert na_dt[x].astype(int) == raw[x]
         else:
             assert raw[x] == qnull(QMINUTE)
@@ -279,7 +279,7 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('timedelta64[s]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.timedelta64('NaT', 's'):
+        if not np.isnat(na_dt[x]):
             assert na_dt[x].astype(int) == raw[x]
         else:
             assert raw[x] == qnull(QSECOND)
@@ -289,7 +289,7 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('timedelta64[ms]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.timedelta64('NaT', 'ms'):
+        if not np.isnat(na_dt[x]):
             assert na_dt[x].astype(int) == raw[x]
         else:
             assert raw[x] == qnull(QTIME)
@@ -299,7 +299,7 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('timedelta64[ns]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.timedelta64('NaT', 'ns'):
+        if not np.isnat(na_dt[x]):
             assert na_dt[x].astype(np.int64) == raw[x]
         else:
             assert raw[x] == qnull(QTIMESPAN)
@@ -309,19 +309,22 @@ def test_array_from_raw_qtemporal():
 
     assert str(na_dt.dtype).startswith('datetime64[ns]')
     for x in range(len(na_dt)):
-        if na_dt[x] != np.datetime64('NaT', 'ns'):
-            assert na_dt[x].astype(np.int64) == raw[x] + np.datetime64('2000-01-01T00:00:00Z', 'ns').astype(np.int64)
+        if not np.isnat(na_dt[x]):
+            assert na_dt[x].astype(np.int64) == raw[x] + np.datetime64('2000-01-01T00:00:00', 'ns').astype(np.int64)
         else:
             assert raw[x] == qnull(QTIMESTAMP)
 
 
     raw = np.array([3.234, qnull(QDATETIME)])
     na_dt = array_from_raw_qtemporal(raw, qtype=QDATETIME)
-    ref = np.array([np.datetime64('2000-01-04T05:36:57.600Z', 'ms'), np.datetime64('nat', 'ms')])
+    ref = np.array([np.datetime64('2000-01-04T05:36:57.600', 'ms'), np.datetime64('nat', 'ms')])
 
     assert str(na_dt.dtype).startswith('datetime64[ms]')
     for x in range(len(na_dt)):
-        assert na_dt[x] == ref[x]
+        if not np.isnat(na_dt[x]):
+            assert na_dt[x] == ref[x]
+        else:
+            assert np.isnan(raw[x])
 
 
 test_is_null()
