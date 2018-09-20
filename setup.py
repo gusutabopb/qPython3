@@ -33,7 +33,7 @@ else:
     use_cython = True
 
 if use_cython:
-    ext_modules = cythonize('qpython/fastutils.pyx')
+    ext_modules = cythonize('qpython3/fastutils.pyx')
 else:
     ext_modules = []
 
@@ -43,7 +43,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-setup(name = 'qPython',
+setup(name = 'qPython3',
       version = __version__,
       description = 'kdb+ interfacing library for Python',
       long_description=read('README.rst'),
@@ -81,7 +81,7 @@ setup(name = 'qPython',
           'Topic :: Scientific/Engineering',
           'Topic :: Software Development',
           ],
-      packages = ['qpython'],
-      package_data = {'qpython': ['fastutils.pyx']},
+      packages = ['qpython3'],
+      package_data = {'qpython3': ['fastutils.pyx']},
       data_files = [('', ['LICENSE', 'CHANGELOG.txt', 'README.rst', 'requirements.txt'])]
      )
