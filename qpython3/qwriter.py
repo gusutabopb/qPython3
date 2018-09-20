@@ -146,7 +146,7 @@ class QWriter(object):
             self._buffer.write(struct.pack(fmt, data))
         except KeyError:
             t = data.__class__ if isinstance(data, object) else type(data)
-            raise QWriterException(r'Unable to serialize type: {t!r}')
+            raise QWriterException(f'Unable to serialize type: {t!r}')
 
 
     @serialize(tuple, list)
