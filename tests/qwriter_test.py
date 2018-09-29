@@ -339,18 +339,13 @@ EXPRESSIONS = OrderedDict((
 ))
 
 
-
-def init():
-    with open('tests/QExpressions3.out', 'rb') as f:
-        while True:
-            query = f.readline().strip()
-            binary = f.readline().strip()
-
-            if not binary:
-                break
-
-            BINARY[query] = binary
-
+with open('tests/QExpressions3.out', 'rb') as f:
+    while True:
+        query = f.readline().strip()
+        binary = f.readline().strip()
+        if not binary:
+            break
+        BINARY[query] = binary
 
 
 def test_writing():
@@ -384,8 +379,3 @@ def test_write_single_char_string():
             serialized = binascii.hexlify(w.write(obj, 1, single_char_strings = single_char_strings ))[16:].lower()
             assert serialized == BINARY[query].lower(), 'serialization failed: %s, expected: %s actual: %s' % (query,  BINARY[query].lower(), serialized)
             single_char_strings = not single_char_strings
-
-
-init()
-test_writing()
-test_write_single_char_string()

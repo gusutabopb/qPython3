@@ -224,7 +224,6 @@ NUMPY_TEMPORAL_EXPRESSIONS = OrderedDict((
                     ))
 
 
-
 COMPRESSED_EXPRESSIONS = OrderedDict((
     (b'1000#`q', qlist(np.array(['q'] * 1000), qtype=QSYMBOL_LIST)),
     (b'([] q:1000#`q)', qtable(
@@ -236,8 +235,6 @@ COMPRESSED_EXPRESSIONS = OrderedDict((
          qlist(np.arange(200) + 25, qtype=QLONG_LIST),
          qlist(np.array(['a'] * 200), qtype=QSYMBOL_LIST)])),
 ))
-
-
 
 
 def arrays_equal(left, right):
@@ -340,7 +337,6 @@ def test_reading():
             print('.')
 
 
-
 def test_reading_numpy_temporals():
     BINARY = OrderedDict()
 
@@ -375,7 +371,6 @@ def test_reading_numpy_temporals():
             assert isinstance(value, QException)
             assert e.args == value.args
             print('.')
-
 
 
 def test_reading_compressed():
@@ -419,9 +414,3 @@ def test_reading_compressed():
             assert isinstance(value, QException)
             assert e.args == value.args
             print('.')
-
-
-
-test_reading()
-test_reading_numpy_temporals()
-test_reading_compressed()

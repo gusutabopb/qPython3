@@ -325,12 +325,3 @@ def test_array_from_raw_qtemporal():
             assert na_dt[x] == ref[x]
         else:
             assert np.isnan(raw[x])
-
-
-test_is_null()
-test_qdict()
-test_qtable()
-test_qkeyedtable()
-test_qtemporallist()
-test_array_to_raw_qtemporal()
-test_array_from_raw_qtemporal()
