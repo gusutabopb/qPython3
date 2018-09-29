@@ -301,7 +301,7 @@ class QConnection(object):
                                MessageType.ASYNC if response.type == MessageType.ASYNC else MessageType.RESPONSE)
             raise QReaderException('Received message of type: %s where response was expected')
 
-    def async(self, query, *parameters, **options):
+    def async_(self, query, *parameters, **options):
         '''Performs an asynchronous query and returns **without** retrieving of 
         the response.
         
@@ -311,11 +311,11 @@ class QConnection(object):
         
         Calls a anonymous function with a single parameter:
         
-            >>> q.async('{til x}', 10)
+            >>> q.async_('{til x}', 10)
         
         Executes a q expression:
         
-            >>> q.async('til 10')
+            >>> q.async_('til 10')
         
         :Parameters:
          - `query` (`string`) - query to be executed

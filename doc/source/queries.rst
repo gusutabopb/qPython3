@@ -64,6 +64,38 @@ Asynchronous queries
 ********************
 
 Calls a anonymous function with a single parameter:
+
+    >>> q.async_('{til x}', 10)
+
+Executes a q expression:
+
+    >>> q.async('til 10')
+
+
+
+    >>> q.async_('{til x}', 10)
+
+Executes a q expression:
+
+    >>> q.async('til 10')
+
+
+
+    >>> q.async('{til x}', 10)
+
+Executes a q expression:
+
+    >>> q.async_('til 10')
+
+
+
+    >>> q.async('{til x}', 10)
+
+Executes a q expression:
+
+    >>> q.async_('til 10')
+
+
         
     >>> q.async('{til x}', 10)
 
@@ -78,7 +110,67 @@ In order to retrieve query result (for the
 :func:`~qpython.qconnection.QConnection.async` or 
 :func:`~qpython.qconnection.QConnection.query` methods), one has to call:
  
-- :func:`~qpython.qconnection.QConnection.receive` method, which reads next 
+- :func:`~qpython.qconnection.QConnection.receive` method, which reads next
+  message from the remote q service.
+
+For example:
+
+- Retrieves query result along with meta-information:
+
+>>> q.query(qconnection.MessageType.SYNC,'{x}', 10)
+>>> print(q.receive(data_only = False, raw = False))
+QMessage: message type: 2, data size: 13, is_compressed: False, data: 10
+
+- Retrieves parsed query result:
+
+>>> q.query(qconnection.MessageType.SYNC,'{x}', 10)
+>>> print(q.receive(data_only = True, raw = False))
+10
+
+>>> q.sync('asynchMult:{[a;b] res:a*b; (neg .z.w)(res) }')
+>>> q.async_('asynchMult', 2, 3)
+>>> print(q.receive())
+6
+
+- Retrieves not-parsed (raw) query result:
+
+>>> from binascii import hexlify
+>>> q.query(qconnection.MessageType.SYNC,'{x}', 10)
+>>> print(hexlify(q.receive(data_only = True, raw = True)))
+fa0a000000
+
+
+
+  message from the remote q service.
+
+For example:
+
+- Retrieves query result along with meta-information:
+
+>>> q.query(qconnection.MessageType.SYNC,'{x}', 10)
+>>> print(q.receive(data_only = False, raw = False))
+QMessage: message type: 2, data size: 13, is_compressed: False, data: 10
+
+- Retrieves parsed query result:
+
+>>> q.query(qconnection.MessageType.SYNC,'{x}', 10)
+>>> print(q.receive(data_only = True, raw = False))
+10
+
+>>> q.sync('asynchMult:{[a;b] res:a*b; (neg .z.w)(res) }')
+>>> q.async_('asynchMult', 2, 3)
+>>> print(q.receive())
+6
+
+- Retrieves not-parsed (raw) query result:
+
+>>> from binascii import hexlify
+>>> q.query(qconnection.MessageType.SYNC,'{x}', 10)
+>>> print(hexlify(q.receive(data_only = True, raw = True)))
+fa0a000000
+
+
+
   message from the remote q service.
 
 For example:   
