@@ -91,7 +91,7 @@ class QConnection(object):
         self._options = MetaData(**CONVERSION_OPTIONS.union_dict(**options))
 
         try:
-            from qpython._pandas import PandasQReader, PandasQWriter
+            from qpython3._pandas import PandasQReader, PandasQWriter
             self._reader_class = PandasQReader
             self._writer_class = PandasQWriter
         except ImportError:
