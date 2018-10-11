@@ -10,7 +10,7 @@ Following example presents how to execute simple, synchronous query against a re
 
 .. code:: python
 
-    from qpython import qconnection
+    from qpython3 import qconnection
     
     
     if __name__ == '__main__':
@@ -61,10 +61,10 @@ Following example presents how to execute simple, asynchronous query against a r
     import threading
     import time
     
-    from qpython import qconnection
-    from qpython.qtype import QException
-    from qpython.qconnection import MessageType
-    from qpython.qcollection import QDictionary
+    from qpython3 import qconnection
+    from qpython3.qtype import QException
+    from qpython3.qconnection import MessageType
+    from qpython3.qcollection import QDictionary
     
     
     class ListenerThread(threading.Thread):
@@ -138,9 +138,9 @@ This example depicts how to create a simple interactive console for communicatio
 
 .. code:: python
 
-    import qpython
-    from qpython import qconnection
-    from qpython.qtype import QException
+    import qpython3
+    from qpython3 import qconnection
+    from qpython3.qtype import QException
     
     try:
         input = raw_input
@@ -188,9 +188,9 @@ This example presents how the `qPython` can be used along with `Twisted`_ to bui
     from twisted.internet.protocol import Protocol, ClientFactory
     
     from twisted.internet import reactor
-    from qpython.qconnection import MessageType, QAuthenticationException
-    from qpython.qreader import QReader
-    from qpython.qwriter import QWriter, QWriterException
+    from qpython3.qconnection import MessageType, QAuthenticationException
+    from qpython3.qreader import QReader
+    from qpython3.qwriter import QWriter, QWriterException
     
     
     
@@ -350,10 +350,10 @@ This example depicts how to subscribe to standard kdb+ tickerplant service:
     import threading
     import sys
     
-    from qpython import qconnection
-    from qpython.qtype import QException
-    from qpython.qconnection import MessageType
-    from qpython.qcollection import QTable
+    from qpython3 import qconnection
+    from qpython3.qtype import QException
+    from qpython3.qconnection import MessageType
+    from qpython3.qcollection import QTable
     
     
     class ListenerThread(threading.Thread):
@@ -424,9 +424,9 @@ This example shows how to stream data to the kdb+ process using standard tickerp
     import sys
     import time
     
-    from qpython import qconnection
-    from qpython.qcollection import qlist
-    from qpython.qtype import QException, QTIME_LIST, QSYMBOL_LIST, QFLOAT_LIST
+    from qpython3 import qconnection
+    from qpython3.qcollection import qlist
+    from qpython3.qtype import QException, QTIME_LIST, QSYMBOL_LIST, QFLOAT_LIST
     
     
     class PublisherThread(threading.Thread):
@@ -499,9 +499,9 @@ Please refer to :ref:`custom_type_mapping` on implementation aspects:
 
     import numpy
 
-    from qpython import qconnection
-    from qpython.qreader import QReader
-    from qpython.qtype import QSYMBOL, QSYMBOL_LIST, Mapper
+    from qpython3 import qconnection
+    from qpython3.qreader import QReader
+    from qpython3.qtype import QSYMBOL, QSYMBOL_LIST, Mapper
     
     
     class StringQReader(QReader):
